@@ -81,6 +81,9 @@ package, not results from a study.
 
 ## Data
 
+[docs/swatches.png](docs/swatches.png) shows every palette in its original colours, as lines with
+markers and dashes and as hatched bars (drawn by `examples/swatches.py`).
+
 Categorical palettes, with the smallest pairwise CIEDE2000 under normal vision and each simulation
 at severity 1:
 
