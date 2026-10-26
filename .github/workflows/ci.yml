@@ -1,0 +1,44 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths-ignore: ['README*.md', 'CHANGELOG.md', 'LICENSE']
+  pull_request:
+    paths-ignore: ['README*.md', 'CHANGELOG.md', 'LICENSE']
+  workflow_dispatch:
+permissions:
+  contents: read
+# A newer push to a pull request replaces the run that is still going
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.pick.outputs.matrix }}
+    steps:
+      - id: pick
+        shell: bash
+        # macOS and Windows run for a release tag or a manual run, Linux on every push
+        run: |
+          linux='{"os":"ubuntu-latest","python":"3.12"},{"os":"ubuntu-latest","python":"3.13"},{"os":"ubuntu-latest","python":"3.14"}'
+          if [[ "$GITHUB_REF" == refs/tags/* || "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            echo "matrix={\"include\":[$linux,{\"os\":\"windows-latest\",\"python\":\"3.14\"},{\"os\":\"macos-latest\",\"python\":\"3.14\"}]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "matrix={\"include\":[$linux]}" >> "$GITHUB_OUTPUT"
+          fi
+
+  test:
+    needs: plan
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.0
+      - run: uv run --locked --python ${{ matrix.python }} pytest -q

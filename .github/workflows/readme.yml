@@ -1,0 +1,13 @@
+name: readme
+on:
+  push:
+    branches: [main]
+  pull_request:
+# A newer push to a pull request replaces the run that is still going
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  readme:
+    uses: NaNIsaac/.github/.github/workflows/readme.yml@main
