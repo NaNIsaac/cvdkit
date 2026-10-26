@@ -1,0 +1,45 @@
+[project]
+name = "cvdkit"
+version = "0.1.0"
+description = "Colour-vision-deficiency-safe palettes, redundant encodings and simulation checks for matplotlib"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE*", "THIRD_PARTY_NOTICES.md"]
+authors = [{ name = "Isaac Yong", email = "isaacyong@naver.com" }]
+requires-python = ">=3.12"
+keywords = ["color blindness", "colour vision deficiency", "accessibility", "matplotlib", "palette"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Matplotlib",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = [
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/NaNIsaac/cvdkit"
+Repository = "https://github.com/NaNIsaac/cvdkit"
+Issues = "https://github.com/NaNIsaac/cvdkit/issues"
+
+[build-system]
+requires = ["uv_build>=0.12.7,<0.13"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = ["pytest>=9.1.1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+extend-select = ["I", "UP", "B"]
