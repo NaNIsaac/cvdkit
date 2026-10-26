@@ -77,6 +77,9 @@ plt.imsave("figure_deutan.png", sim)
 
 ## 데이터
 
+[docs/swatches.png](docs/swatches.png)는 모든 팔레트를 원래 색 그대로, 마커와 점선이 있는 선과 해칭 막대로
+보여줍니다(`examples/swatches.py`로 그림).
+
 범주형 팔레트와, 정상 색각 및 severity 1 시뮬레이션에서의 최소 쌍별 CIEDE2000입니다.
 
 | 이름 | 색 수 | 정상 | protan | deutan | tritan | 출처 | 조건 |
