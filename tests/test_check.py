@@ -75,3 +75,35 @@ def test_check_only_compares_within_one_axes():
     a1.plot([0, 1], color=ORANGE)
     a2.plot([0, 1], color=AQUA)
     assert check(fig) == []
+
+
+def test_check_uses_edge_colour_for_two_open_markers():
+    fig, ax = _fig()
+    ax.plot([0, 1], [0, 1], "D", color="black", mfc="none", ls="none", label="dark")
+    ax.plot([0, 1], [1, 0], "D", color="0.55", mfc="none", ls="none", label="light")
+    # Both marker faces are transparent; the drawn edges are distinguishable.
+    assert check(fig, kinds=()) == []
+
+
+def test_check_treats_open_vs_filled_as_a_second_channel():
+    fig, ax = _fig()
+    ax.plot([0, 1], [0, 1], "D", color="black", ls="none", label="filled")
+    ax.plot([0, 1], [1, 0], "D", color="black", mfc="none", ls="none", label="open")
+    # Fill state, like dash or marker shape, can distinguish equal colours.
+    assert check(fig, kinds=()) == []
+
+
+def test_check_reports_actual_edge_colours_when_open_markers_collide():
+    fig, ax = _fig()
+    ax.plot([0, 1], [0, 1], "D", color="black", mfc="none", ls="none", label="a")
+    ax.plot([0, 1], [1, 0], "D", color="0.05", mfc="none", ls="none", label="b")
+    (hit,) = check(fig, kinds=())
+    assert hit.view == "normal"
+    assert (hit.color_a, hit.color_b) == ("#000000", "#0d0d0d")
+
+
+def test_check_ignores_invisible_marker_with_no_face_or_edge():
+    fig, ax = _fig()
+    ax.plot([0, 1], [0, 1], "D", color="black", mfc="none", mec="none", ls="none")
+    ax.plot([0, 1], [1, 0], "D", color="black", mfc="none", mec="none", ls="none")
+    assert check(fig, kinds=()) == []
