@@ -77,7 +77,6 @@ def test_check_only_compares_within_one_axes():
     assert check(fig) == []
 
 
-
 def test_check_uses_edge_colour_for_two_open_markers():
     fig, ax = _fig()
     ax.plot([0, 1], [0, 1], "D", color="black", mfc="none", ls="none", label="dark")
