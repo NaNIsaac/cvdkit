@@ -107,14 +107,24 @@ def _line_item(i: int, line: Line2D) -> _Item | None:
     has_marker = marker not in ("None", None, "", " ", "none")
     if not (has_line or has_marker):
         return None
-    color = line.get_color() if has_line else line.get_markerfacecolor()
+    # An unfilled marker is drawn with its edge, not its transparent face.
+    # Fill style also provides a distinct non-colour channel (open vs filled).
+    face = line.get_markerfacecolor() if has_marker else None
+    unfilled = isinstance(face, str) and face.casefold() == "none"
+    if has_line:
+        color = line.get_color()
+    else:
+        color = line.get_markeredgecolor() if unfilled else face
+        # Nothing is visible when both face and edge are transparent.
+        if color is None or (isinstance(color, str) and color.casefold() == "none"):
+            return None
     # get_linestyle() reports every custom dash tuple as "--", so compare the pattern itself
     _, seq = getattr(line, "_unscaled_dash_pattern", (0, None))
     dashes = tuple(np.round(seq, 2)) if has_line and seq else ()
     channels = (
         "line",
         has_line and (line.get_linestyle(), dashes),
-        has_marker and str(marker),
+        has_marker and (str(marker), "open" if unfilled else "filled"),
     )
     return _Item(line.get_label() or f"line {i}", as_rgb(color), channels, "line")
 
